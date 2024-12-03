@@ -1,4 +1,5 @@
 require "thread/inheritable_attributes"
+require "securerandom"
 
 RSpec.describe Thread do
   after { Thread.current.send(:store)[:inheritable_attributes] = nil }
@@ -32,6 +33,13 @@ RSpec.describe Thread do
       a, b, c = 1, 2, 3
       Thread.new(a, b, c) { |d, e, f| arr << d << e << f }.join
       expect(arr).to eq [1, 2, 3]
+    end
+
+    it "single arg is expanded properly" do
+      total = 1
+      a = 7
+      Thread.new(a) { |b| total += b }.join
+      expect(total).to eq 8
     end
   end
 
